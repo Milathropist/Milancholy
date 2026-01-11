@@ -6,6 +6,10 @@
 
 (function($) {
 
+		function togglePlayer() {
+  		  document.getElementById("musicPlayer").classList.toggle("active");
+		}
+
 	var	$window = $(window),
 		$body = $('body'),
 		$wrapper = $('#wrapper'),
