@@ -1107,6 +1107,60 @@ input, select, textarea {
 		line-height: calc(2.75rem - 2px);
 	}
 
+/* Audio Player */
+
+	.audio-player {
+	  display: flex;
+	  align-items: center;
+	  gap: 10px;
+	  padding: 10px 15px;
+	  border-radius: 20px;
+
+	  backdrop-filter: blur(8px);
+	  border-top: 1px solid rgba(158, 157, 157, 0.4);
+	  border-left: 1px solid rgba(158, 157, 157, 0.3);
+	  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
+	}
+
+	.audio-player button {
+ 	 background: transparent;
+ 	 border: none;
+	  font-size: 18px;
+	  cursor: pointer;
+	  color: white;
+	}
+
+	/* ---------- PROGRESS BAR STYLING ---------- */
+	.audio-player input[type="range"] {
+	  flex: 1;
+	  height: 9px;               /* added: track height */
+	  border-radius: 5px;         /* added: round edges */
+	  -webkit-appearance: none;   /* added: remove default styling */
+	  background: linear-gradient(to right, #f06 0%, #f06 0%, #555 0%, #555 100%); /* added: initial gradient */
+	  cursor: pointer;             /* added: pointer cursor */
+	}
+
+	/* Thumb styling */
+	.audio-player input[type="range"]::-webkit-slider-thumb {
+	  -webkit-appearance: none;
+	  width: 16px;
+	  height: 16px;
+	  border-radius: 50%;
+	  background: #fff;
+	  border: 2px solid #f06;
+	  cursor: pointer;
+	  margin-top: -1px; /* center thumb on track */
+	}
+
+	.audio-player input[type="range"]::-moz-range-thumb {
+	  width: 16px;
+	  height: 16px;
+	  border-radius: 50%;
+	  background: #fff;
+	  border: 2px solid #f06;
+	  cursor: pointer;
+	}
+
 /* BG */
 
 	#bg {
