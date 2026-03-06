@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8">
   <script>
-    const path = window.location.pathname.replace(/^\/+/, "");
-    window.location.replace("/index.html#" + path);
+    const normalizedPath = window.location.pathname
+      .replace(/^\/+|\/+$/g, "")
+      .replace(/^index\.html$/i, "");
+    const target = normalizedPath ? "/index.html#" + normalizedPath : "/index.html";
+    window.location.replace(target);
   </script>
 </head>
 <body>
