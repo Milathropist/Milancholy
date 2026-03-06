@@ -1,8 +1,6 @@
 title: Milancholy
 markdown: kramdown
 permalink: pretty
-url: "https://milancholy.com"
-baseurl: ""
 collections:
   blog_articles:
     output: false

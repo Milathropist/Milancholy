@@ -8,39 +8,27 @@ hero_image: /images/blog.jpg
 <ul>
   {% assign posts = site.blog_articles | sort: 'order' | reverse %}
   {% for article in posts %}
-    {% assign article_anchor = article.slug | default: article.title | slugify %}
     <li>
-      <a href="#{{ article_anchor }}">{{ article.title }}</a>
+      <a href="#{{ article.slug }}">{{ article.title }}</a>
     </li>
   {% endfor %}
 </ul>
 
 {% for article in posts %}
-  {% assign article_anchor = article.slug | default: article.title | slugify %}
-  {% assign article_categories = article.categories | default: article.category | arrayify %}
-  <section class="article-block" id="{{ article_anchor }}">
+  <section class="article-block" id="{{ article.slug }}">
     {% if article.image %}
       <figure class="article-cover">
         <img src="{{ article.image | relative_url }}" alt="{{ article.title }}" />
       </figure>
     {% endif %}
     <p><em>{{ article.date | date: "%d %B %Y" }}</em></p>
-    {% if article_categories and article_categories.size > 0 %}
-      <p class="article-categories">
-        {% for category in article_categories %}
-          {% if category %}
-            <span class="category-pill">{{ category }}</span>
-          {% endif %}
-        {% endfor %}
-      </p>
-    {% endif %}
     {{ article.content }}
     <ul class="icons article-link">
       <li>
         <a
-          href="#{{ article_anchor }}"
+          href="#{{ article.slug }}"
           class="icon solid fa-share share-article"
-          data-share-hash="#{{ article_anchor }}"
+          data-share-hash="#{{ article.slug }}"
           aria-label="Copy link to {{ article.title }}"
           title="Copy share link">
           <span class="label">Copy share link</span>
