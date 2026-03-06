@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script>
+    const isProjectPath = window.location.pathname.startsWith("/Milasite/");
+    const basePath = isProjectPath ? "/Milasite" : "";
+    const path = isProjectPath
+      ? window.location.pathname.replace(/^\/Milasite\//, "")
+      : window.location.pathname.replace(/^\//, "");
+    window.location.replace(basePath + "/index.html#" + path);
+  </script>
+</head>
+<body>
+</body>
+</html>
+
+
+
