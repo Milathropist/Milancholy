@@ -1,5 +1,3 @@
-VISIT THE WEBSITE: milathropist.github.io/Milancholy
-
 TEMPLATE (EDITED BY MILA):
 Dimension by HTML5 UP
 html5up.net | @ajlkn
@@ -32,4 +30,3 @@ Credits:
 		jQuery (jquery.com)
 
 		Responsive Tools (github.com/ajlkn/responsive-tools)
-
