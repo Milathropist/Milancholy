@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ page.title }} | {{ site.title }}</title>
     <link rel="icon" type="image/png" href="{{ '/images/Favicon.png' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}" />
     <noscript><link rel="stylesheet" href="{{ '/assets/css/noscript.css' | relative_url }}" /></noscript>
@@ -36,9 +37,10 @@
       #main article {
         width: min(100%, 56rem);
         margin: 0 auto;
-        background-color: rgba(112, 20, 20, 0.45);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
+      }
+
+      #main article .close {
+        text-indent: -9999px;
       }
 
       .hero {
@@ -57,128 +59,36 @@
       }
 
       .toc {
-        background: rgba(220, 64, 64, 0.2);
+        background: rgba(238, 162, 214, 0.23);
         padding: 0.95rem;
         border-radius: 0.3rem;
       }
 
-      .article-block,
-      .item-block {
+      .article-block {
         margin-top: 1.25rem;
         padding: 1rem;
         border-radius: 0.25rem;
-        background: rgba(180, 40, 40, 0.2);
+        background: rgba(231, 161, 217, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      .article-block h2,
-      .item-block h2 {
+      .article-block h2 {
         margin-bottom: 0.55rem;
-        display: flex;
-        align-items: center;
-        gap: 0.55rem;
       }
 
-      .article-cover,
-      .item-cover {
+      .article-cover {
         margin: 0 0 1rem;
       }
 
-      .article-cover img,
-      .item-cover img {
+      .article-cover img {
         width: 100%;
         display: block;
         border-radius: 0.2rem;
       }
 
-      #main article .article-block p img,
-      #main article .item-block p img,
-      #main article .article-block > img,
-      #main article .item-block > img {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        display: block;
-        border-radius: 0.2rem;
-      }
-
-      .article-link,
-      .item-link {
+      .article-link {
         font-size: 0.9rem;
         opacity: 0.85;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        padding-left: 0;
-        margin-left: 0;
-      }
-
-      .share-article {
-        cursor: pointer;
-      }
-
-      #main article ul.socials-icons,
-      #main article ul.article-link,
-      #main article ul.item-link {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
-        width: 100%;
-        margin-left: 0;
-        padding-left: 0;
-        text-align: center;
-      }
-
-      #main article ul.icons li {
-        padding: 0;
-        margin: 0 0.3rem;
-      }
-
-      #main article ul.icons li a,
-      #main article .share-article {
-        background-color: rgba(180, 40, 40, 0.25);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border-radius: 25px;
-        border-top: 1px solid rgba(255, 152, 152, 0.45);
-        border-left: 1px solid rgba(240, 120, 120, 0.35);
-        box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
-        color: #ffffff !important;
-        width: 3rem;
-        height: 3rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 3rem;
-        font-size: 1.25rem;
-        opacity: 0;
-        transition: opacity 0.2s ease-in-out, background-color 0.2s ease-in-out,
-          border-top-color 0.2s ease-in-out, border-left-color 0.2s ease-in-out;
-      }
-
-      #main article.active ul.icons li a,
-      #main article.active .share-article,
-      body.is-article-visible #main article ul.icons li a,
-      body.is-article-visible #main article .share-article {
-        opacity: 1;
-      }
-
-      #main article ul.icons li a:hover,
-      #main article .share-article:hover {
-        background-color: rgba(220, 64, 64, 0.28);
-        border-top-color: rgba(255, 188, 188, 0.5);
-        border-left-color: rgba(255, 156, 156, 0.4);
-      }
-
-      #main article ul.icons li a:active,
-      #main article .share-article:active {
-        background-color: rgba(255, 88, 88, 0.3);
-      }
-
-      .share-article.is-copied {
-        opacity: 0.6;
       }
 
       .audio-player {
@@ -187,10 +97,9 @@
         gap: 10px;
         padding: 10px 15px;
         border-radius: 20px;
-        background-color: rgba(180, 40, 40, 0.22);
         backdrop-filter: blur(8px);
-        border-top: 1px solid rgba(255, 152, 152, 0.45);
-        border-left: 1px solid rgba(240, 120, 120, 0.35);
+        border-top: 1px solid rgba(158, 157, 157, 0.4);
+        border-left: 1px solid rgba(158, 157, 157, 0.3);
         box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
       }
 
@@ -207,7 +116,7 @@
         height: 9px;
         border-radius: 5px;
         -webkit-appearance: none;
-        background: linear-gradient(to right, #ff4d4d 0%, #ff4d4d 0%, #555 0%, #555 100%);
+        background: linear-gradient(to right, #f06 0%, #f06 0%, #555 0%, #555 100%);
         cursor: pointer;
       }
 
@@ -217,7 +126,7 @@
         height: 16px;
         border-radius: 50%;
         background: #fff;
-        border: 2px solid #ff4d4d;
+        border: 2px solid #f06;
         cursor: pointer;
         margin-top: -1px;
       }
@@ -227,17 +136,17 @@
         height: 16px;
         border-radius: 50%;
         background: #fff;
-        border: 2px solid #ff4d4d;
+        border: 2px solid #f06;
         cursor: pointer;
       }
 
       .collapsible {
         border-radius: 25px;
-        background-color: rgba(180, 40, 40, 0.24);
+        background-color: rgba(158, 157, 157, 0.027);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        border-top: 1px solid rgba(255, 152, 152, 0.45);
-        border-left: 1px solid rgba(240, 120, 120, 0.35);
+        border-top: 1px solid rgba(158, 157, 157, 0.4);
+        border-left: 1px solid rgba(158, 157, 157, 0.3);
         box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
         color: white;
         cursor: pointer;
@@ -251,11 +160,11 @@
       .collapsible.active,
       .collapsible:hover {
         border-radius: 25px;
-        background-color: rgba(220, 64, 64, 0.3);
+        background-color: rgba(76, 75, 75, 0.027);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        border-top: 1px solid rgba(255, 188, 188, 0.5);
-        border-left: 1px solid rgba(255, 156, 156, 0.4);
+        border-top: 1px solid rgba(76, 75, 75, 0.4);
+        border-left: 1px solid rgba(176, 75, 75, 0.3);
         box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
       }
 
@@ -299,23 +208,25 @@
       }
     </style>
   </head>
-  <body>
+  <body class="is-preload">
     <div id="wrapper">
       <header id="header">
         <div class="content">
           <div class="inner">
             <h1>{{ site.title }}</h1>
+            <p>{{ page.title }}</p>
           </div>
         </div>
         {% include nav.html %}
       </header>
       <div id="main">
         <article id="page-content" class="active">
-          <a class="close" href="{{ '/' | relative_url }}">Close</a>
+          <a class="close" href="{{ '/' | relative_url }}" aria-label="Back to home">&times;</a>
           <header class="hero">
             {% if page.hero_image %}
               <img src="{{ page.hero_image | relative_url }}" alt="{{ page.title }}" />
             {% endif %}
+            <h1>{{ page.title }}</h1>
           </header>
           {{ content }}
         </article>
@@ -323,6 +234,10 @@
     </div>
     <div id="bg"></div>
     <script>
+      window.setTimeout(() => {
+        document.body.classList.remove("is-preload");
+      }, 100);
+
       const spoilerNodes = document.querySelectorAll("spo");
       spoilerNodes.forEach((node) => {
         node.setAttribute("tabindex", "0");
@@ -340,18 +255,7 @@
       collapsibleNodes.forEach((node) => {
         node.addEventListener("click", () => {
           const isOpen = node.classList.toggle("active");
-          let content = node.nextElementSibling;
-          while (content && !content.classList.contains("collapse-content")) {
-            content = content.nextElementSibling;
-          }
-
-          if (!content && node.parentElement) {
-            content = node.parentElement.nextElementSibling;
-            while (content && !content.classList.contains("collapse-content")) {
-              content = content.nextElementSibling;
-            }
-          }
-
+          const content = node.nextElementSibling;
           if (!content) return;
 
           if (isOpen) {
@@ -374,7 +278,7 @@
 
         const updateProgressFill = () => {
           const value = Number(progress.value) || 0;
-          progress.style.background = `linear-gradient(to right, #ff4d4d 0%, #ff4d4d ${value}%, #555 ${value}%, #555 100%)`;
+          progress.style.background = `linear-gradient(to right, #f06 0%, #f06 ${value}%, #555 ${value}%, #555 100%)`;
         };
 
         const formatTime = (seconds) => {
@@ -412,48 +316,6 @@
         });
 
         updateProgressFill();
-      });
-
-      const shareButtons = document.querySelectorAll(".share-article");
-      shareButtons.forEach((button) => {
-        button.addEventListener("click", async (event) => {
-          event.preventDefault();
-
-          const shareHash = button.dataset.shareHash || "";
-          const shareUrl = `${window.location.origin}${window.location.pathname}${shareHash}`;
-
-          try {
-            if (navigator.clipboard?.writeText) {
-              await navigator.clipboard.writeText(shareUrl);
-            } else {
-              const helper = document.createElement("textarea");
-              helper.value = shareUrl;
-              helper.setAttribute("readonly", "");
-              helper.style.position = "absolute";
-              helper.style.left = "-9999px";
-              document.body.appendChild(helper);
-              helper.select();
-              document.execCommand("copy");
-              document.body.removeChild(helper);
-            }
-
-            button.classList.add("is-copied");
-            setTimeout(() => button.classList.remove("is-copied"), 650);
-          } catch (error) {
-          }
-        });
-      });
-
-      const mainArticle = document.querySelector("#main article");
-      document.addEventListener("click", (event) => {
-        if (!mainArticle) return;
-        if (event.defaultPrevented) return;
-        if (event.button !== 0) return;
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-        if (mainArticle.contains(event.target)) return;
-        if (event.target.closest("a, button, input, textarea, select, label")) return;
-
-        window.location.href = "{{ '/' | relative_url }}";
       });
     </script>
   </body>

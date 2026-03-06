@@ -6,29 +6,6 @@
     <link rel="icon" type="image/png" href="{{ '/images/Favicon.png' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}" />
     <noscript><link rel="stylesheet" href="{{ '/assets/css/noscript.css' | relative_url }}" /></noscript>
-    <script>
-      (() => {
-        try {
-          if (!document.referrer) return;
-
-          const referrerUrl = new URL(document.referrer);
-          if (referrerUrl.origin !== window.location.origin) return;
-
-          const homeUrl = new URL("{{ '/' | relative_url }}", window.location.origin);
-          const homeIndexUrl = new URL("index.html", homeUrl);
-          const normalizePath = (value) => value.replace(/\/+$/, "") || "/";
-          const normalizedReferrerPath = normalizePath(referrerUrl.pathname);
-          const isHomeReferrer =
-            normalizedReferrerPath === normalizePath(homeUrl.pathname) ||
-            normalizedReferrerPath === normalizePath(homeIndexUrl.pathname);
-
-          if (isHomeReferrer) {
-            document.documentElement.classList.add("morph-enter");
-          }
-        } catch (error) {
-        }
-      })();
-    </script>
     <style>
       #header {
         margin-top: 0;
@@ -59,21 +36,6 @@
       #main article {
         width: min(100%, 56rem);
         margin: 0 auto;
-        transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-          opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
-        transform-origin: center top;
-      }
-
-      html.morph-enter #main article {
-        opacity: 0;
-        transform: scale(0.94);
-        filter: blur(10px);
-      }
-
-      html.morph-enter.morph-active #main article {
-        opacity: 1;
-        transform: scale(1);
-        filter: blur(0);
       }
 
       .hero {
@@ -489,19 +451,6 @@
 
         window.location.href = "{{ '/' | relative_url }}";
       });
-
-      const rootNode = document.documentElement;
-      if (rootNode.classList.contains("morph-enter")) {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            rootNode.classList.add("morph-active");
-            setTimeout(() => {
-              rootNode.classList.remove("morph-enter");
-              rootNode.classList.remove("morph-active");
-            }, 500);
-          });
-        });
-      }
     </script>
   </body>
 </html>

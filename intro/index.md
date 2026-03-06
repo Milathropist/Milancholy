@@ -2,7 +2,7 @@
 layout: page
 title: Intro
 permalink: /intro/
-hero_image: /images/intro.jpg
+hero_image: /images/donate.jpg
 ---
 
 <p>Hi, I'm Mila!<br>
@@ -12,5 +12,5 @@ Some info on me:<br>
 ♡ Taken ^w^<br>
 ♡ Bi, but more on the lesbian side:3<br>
 ♡ Wa~<br>
-<p>Check out my <a href="#blog">thoughts:3</a>, or <a href="#thingies">go here</a> for something more silly^^.<br>
-Also, <a href="#wa">check this out;3</a></p>
+<p>Check out my <a href="https://milancholy.com/blog">thoughts:3</a>, or <a href="https://milancholy.com/thingies">go here</a> for something more silly^^.<br>
+Also, <a href="https://milancholy.com/wa">check this out;3</a></p>
