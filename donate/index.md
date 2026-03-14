@@ -17,13 +17,15 @@ hero_image: /images/donate.jpg
         aria-label="Open Ko-fi"
         title="Support on Ko-fi">
         <span class="label">Ko-fi</span>
+      </a>
+    </li>
+    <li>
       <a
         href="https://throne.com/milanthropist"
-        class="icon solid fa-queen"
+        class="icon solid fa-chess-queen"
         aria-label="Open Throne"
         title="Support on Throne">
         <span class="label">Throne</span>
-      </a>
       </a>
     </li>
   </ul>
