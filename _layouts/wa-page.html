@@ -100,6 +100,10 @@
         border-radius: 0.3rem;
       }
 
+      .toc > :last-child {
+        margin-bottom: 0;
+      }
+
       .article-block,
       .item-block {
         margin-top: 1.25rem;
@@ -335,6 +339,25 @@
         box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
       }
 
+      .toc-collapsible {
+        background-color: rgba(255, 112, 214, 0.22);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-top: 1px solid rgba(255, 226, 247, 0.45);
+        border-left: 1px solid rgba(255, 196, 235, 0.35);
+        box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
+      }
+
+      .toc-collapsible.active,
+      .toc-collapsible:hover {
+        background-color: rgba(255, 112, 214, 0.3);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-top: 1px solid rgba(255, 240, 251, 0.5);
+        border-left: 1px solid rgba(255, 214, 242, 0.4);
+        box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
+      }
+
       .collapsible:after {
         content: "\002B";
         color: white;
@@ -526,8 +549,10 @@
 
       const collapsibleNodes = document.querySelectorAll(".collapsible");
       collapsibleNodes.forEach((node) => {
+        node.setAttribute("aria-expanded", node.classList.contains("active") ? "true" : "false");
         node.addEventListener("click", () => {
           const isOpen = node.classList.toggle("active");
+          node.setAttribute("aria-expanded", isOpen ? "true" : "false");
           let content = node.nextElementSibling;
           while (content && !content.classList.contains("collapse-content")) {
             content = content.nextElementSibling;
