@@ -2,7 +2,7 @@
 layout: page
 title: Donate
 permalink: /donate/
-hero_image: /images/donate.jpg
+hero_image: /images/Donate.jpg
 ---
 <p class="toc"><strong>Support:</strong></p>
 
