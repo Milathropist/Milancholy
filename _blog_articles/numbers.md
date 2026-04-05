@@ -1,6 +1,6 @@
 ---
 title: Numbers
-image: /images/numbers.jpg
+image: /images/Numbers.jpg
 order: 002
 ---
 <p style="text-align:justify;"><sup>19th October 2025</sup><br>

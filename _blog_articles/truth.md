@@ -1,6 +1,6 @@
 ---
 title: Truth
-image: /images/truth.jpg
+image: /images/Truth.jpg
 order: 001
 ---
 <p style="text-align:justify;"><sup>17th October 2025</sup><br>

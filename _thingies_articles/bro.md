@@ -1,6 +1,6 @@
 ---
 title: Bro
-image: /images/bro.jpg
+image: /images/Bro.jpg
 order: 002
 ---
 <p style="text-align:justify;">If someone asked me to name a 3 letter word that annoys me the most, I'd without any hesitation spit out "bro".<br>

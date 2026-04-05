@@ -1,6 +1,6 @@
 ---
 title: The Dead
-image: /images/thedead.jpg
+image: /images/TheDead.jpg
 order: 003
 ---
 <p style="text-align:justify;"><sup>3rd November 2025</sup><br>

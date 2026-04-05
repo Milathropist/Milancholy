@@ -1,6 +1,6 @@
 ---
 title: What Makes AI "Human"
-image: /images/whatmakesaihuman.png
+image: /images/WhatMakesAIhuman.png
 order: 004
 ---
 <p style="text-align:justify;"><sup>11th January 2026</sup><br>

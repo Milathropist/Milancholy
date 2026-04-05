@@ -1,6 +1,6 @@
 ---
 title: Horror Story Pick
-image: /images/favhorrorstory.jpg
+image: /images/FavHorrorStory.jpg
 order: 003
 ---
 <p style="text-align:justify;"><sup>3rd November 2025</sup><br>

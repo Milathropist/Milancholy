@@ -45,8 +45,10 @@
 
   const SEARCH_INDEX_URLS = getSearchIndexUrls();
   const MIN_QUERY_LENGTH = 2;
-  const MAX_RESULTS = 12;
+  const MAX_RESULTS = 24;
   const WINDOW_MARGIN = 12;
+  const CLOSE_ANIMATION_DURATION = 260;
+  const CLOSE_ANIMATION_NAME = "xp-window-close";
 
   const normalizeText = (value) => {
     try {
@@ -69,6 +71,10 @@
     index: null,
     indexPromise: null,
     hasPosition: false,
+    isClosing: false,
+    closeAnimationHandler: null,
+    closeTimerId: 0,
+    closeOrigin: null,
   };
 
   const getIndex = async () => {
@@ -182,6 +188,18 @@
     resultsNode.appendChild(fragment);
   };
 
+  const getGroupRank = (item) => (item && item.group === "calendar" ? 1 : 0);
+
+  const getOrderValue = (item) => {
+    const value = Number(item && item.order);
+    return Number.isFinite(value) ? value : 0;
+  };
+
+  const getDateValue = (item) => {
+    const value = Date.parse(String((item && item.date) || ""));
+    return Number.isFinite(value) ? value : 0;
+  };
+
   const runSearch = (items, query) => {
     const tokens = tokenize(query);
     if (tokens.length === 0) return [];
@@ -206,7 +224,23 @@
       scored.push({ item, score });
     }
 
-    scored.sort((a, b) => b.score - a.score);
+    scored.sort((a, b) => {
+      const groupDiff = getGroupRank(a.item) - getGroupRank(b.item);
+      if (groupDiff !== 0) return groupDiff;
+
+      if (getGroupRank(a.item) === 0) {
+        const orderDiff = getOrderValue(b.item) - getOrderValue(a.item);
+        if (orderDiff !== 0) return orderDiff;
+      } else {
+        const dateDiff = getDateValue(b.item) - getDateValue(a.item);
+        if (dateDiff !== 0) return dateDiff;
+      }
+
+      const scoreDiff = b.score - a.score;
+      if (scoreDiff !== 0) return scoreDiff;
+
+      return String(a.item?.title || "").localeCompare(String(b.item?.title || ""));
+    });
     return scored.slice(0, MAX_RESULTS).map(({ item }) => item);
   };
 
@@ -225,16 +259,92 @@
     windowNode.hidden = true;
     windowNode.setAttribute("aria-hidden", "true");
 
+    const reduceMotionQuery =
+      typeof window.matchMedia === "function"
+        ? window.matchMedia("(prefers-reduced-motion: reduce)")
+        : null;
+    const prefersReducedMotion = () => Boolean(reduceMotionQuery?.matches);
+
     const setMeta = (value) => {
       metaNode.textContent = value || "";
     };
 
-    const close = () => {
+    const launchCloseFirework = (origin) => {
+      if (!origin) return;
+
+      const fireworkNode = document.createElement("span");
+      fireworkNode.className = "window-firework";
+      fireworkNode.setAttribute("aria-hidden", "true");
+      fireworkNode.style.left = `${Math.round(origin.x)}px`;
+      fireworkNode.style.top = `${Math.round(origin.y)}px`;
+      document.body.appendChild(fireworkNode);
+
+      const removeFirework = () => {
+        fireworkNode.remove();
+      };
+
+      fireworkNode.addEventListener("animationend", removeFirework, { once: true });
+      window.setTimeout(removeFirework, 500);
+    };
+
+    const clearCloseTimer = () => {
+      if (!state.closeTimerId) return;
+      window.clearTimeout(state.closeTimerId);
+      state.closeTimerId = 0;
+    };
+
+    const clearCloseAnimation = () => {
+      clearCloseTimer();
+      if (state.closeAnimationHandler) {
+        windowNode.removeEventListener("animationend", state.closeAnimationHandler);
+        state.closeAnimationHandler = null;
+      }
+      state.isClosing = false;
+      windowNode.classList.remove("is-closing");
+    };
+
+    const finishClose = (showFirework = false) => {
+      const fireworkOrigin = showFirework ? state.closeOrigin : null;
+      state.closeOrigin = null;
+      clearCloseAnimation();
       windowNode.hidden = true;
       windowNode.setAttribute("aria-hidden", "true");
+      if (fireworkOrigin) {
+        launchCloseFirework(fireworkOrigin);
+      }
+    };
+
+    const close = () => {
+      if (windowNode.hidden || state.isClosing) return;
+
+      const rect = windowNode.getBoundingClientRect();
+      state.closeOrigin = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
+
+      if (prefersReducedMotion()) {
+        finishClose();
+        return;
+      }
+
+      clearCloseAnimation();
+      state.isClosing = true;
+      windowNode.classList.add("is-closing");
+      state.closeAnimationHandler = (event) => {
+        if (event.target !== windowNode || event.animationName !== CLOSE_ANIMATION_NAME) return;
+        finishClose(true);
+      };
+      windowNode.addEventListener("animationend", state.closeAnimationHandler);
+      state.closeTimerId = window.setTimeout(
+        () => finishClose(true),
+        CLOSE_ANIMATION_DURATION + 50
+      );
     };
 
     const open = async () => {
+      clearCloseAnimation();
+      state.closeOrigin = null;
       windowNode.hidden = false;
       windowNode.setAttribute("aria-hidden", "false");
 
@@ -252,7 +362,7 @@
       inputNode.focus();
       inputNode.select();
 
-      setMeta("Loading articles...");
+      setMeta("Loading articles and calendar...");
       try {
         await getIndex();
         if (inputNode.value.trim().length < MIN_QUERY_LENGTH) {

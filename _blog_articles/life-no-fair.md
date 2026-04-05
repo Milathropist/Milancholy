@@ -1,6 +1,6 @@
 ---
 title: Life No fair
-image: /images/lifenofair.jpg
+image: /images/LifeNoFair.jpg
 order: 005
 ---
 <p style="text-align:justify;"><sup>16th March 2026</sup><br>

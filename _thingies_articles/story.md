@@ -1,6 +1,6 @@
 ---
 title: Story
-image: /images/story.jpg
+image: /images/Story.jpg
 order: 001
 ---
 <p style="text-align:justify;">Once upon a time, a few hours ago, a tall boy of a short height was walking with a&nbsp;6yo grandma on a&nbsp;meadow covered in&nbsp;asphalt. It was Thursday, and as befits the beginning of the week, the boy was walking lying on the ground in&nbsp;a&nbsp;squatting position while crawling to the plumbing store for flour, but&nbsp;they only had green oranges. He&nbsp;took them to his uncle, with whom he went by car on a bike to the pool to run on hands with weights in the mountains. After&nbsp;coming back, the uncle comes in the elevator, and&nbsp;here are the stairs. He&nbsp;pushes the button and walks upwards.

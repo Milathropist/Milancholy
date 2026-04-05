@@ -1,6 +1,6 @@
 ---
 title: Paronomasia
-image: /images/paronomasia.jpg
+image: /images/Paronomasia.jpg
 order: 005
 ---
 <p style="text-align:justify;"><sup>16th March 2026</sup><br>

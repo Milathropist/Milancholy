@@ -1,6 +1,6 @@
 ---
 title: Sad Cat Story
-image: /images/sadcatstory.jpg
+image: /images/SadCatStory.jpg
 order: 004
 ---
 <p style="text-align:justify;"><sup>6th March 2026</sup><br>
