@@ -2,7 +2,7 @@
 layout: page
 title: Socials
 permalink: /socials/
-hero_image: /images/socials.jpg
+hero_image: /images/Socials.jpg
 ---
 <ul class="icons socials-icons">
 	<li><a href="https://x.com/milathropist" class="icon brands fa-twitter" title="Open Twitter"><span class="label">Twitter</span></a></li>
