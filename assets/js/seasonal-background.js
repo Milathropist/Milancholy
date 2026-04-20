@@ -6,6 +6,11 @@
       end: { month: 6, day: 30 },
       image: "bgPrideMonth.jpg",
     },
+    {
+      start: { month: 6, day: 1 },
+      end: { month: 6, day: 1 },
+      image: "bgBirthday.jpg",
+    },
   ];
 
   const getDayOfYear = (month, day) => {
