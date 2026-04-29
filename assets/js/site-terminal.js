@@ -2377,11 +2377,6 @@
 
       if (!state.bootLogged) {
         appendLine(output, `TerMILAnal on: ${detectSystem()}`, "system");
-        appendLine(
-          output,
-          'Commands available: "gravity", "space", "stickers", "party", "help", "minesweeper", "bubble wrap", "runner"',
-          "system"
-        );
         state.bootLogged = true;
       }
 
