@@ -1,6 +1,6 @@
 title: Milancholy
-url: https://milathropist.github.io
-baseurl: /Milasite
+url: https://milancholy.com
+baseurl: ""
 markdown: kramdown
 permalink: pretty
 collections:
