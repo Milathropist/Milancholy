@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% include head-meta.html %}
     <link rel="icon" type="image/png" href="{{ '/images/Favicon.png' | relative_url }}">
     <script src="{{ '/assets/js/seasonal-background.js' | relative_url }}"></script>
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}" />
@@ -655,10 +656,11 @@
       </header>
       <div id="main">
         <article id="page-content" class="active{% if page.permalink == '/intro/' %} intro-page-content{% endif %}">
-          <a class="close" href="{{ '/' | relative_url }}">Close</a>
+          <a class="close" href="{{ page.close_url | default: '/' | relative_url }}">Close</a>
           <header class="hero">
-            {% if page.hero_image %}
-              <img src="{{ page.hero_image | relative_url }}" alt="{{ page.title }}" />
+            {% assign hero_image = page.hero_image | default: page.image %}
+            {% if hero_image %}
+              <img src="{{ hero_image | relative_url }}" alt="{{ page.title }}" />
             {% endif %}
           </header>
           {{ content }}
@@ -774,8 +776,16 @@
         button.addEventListener("click", async (event) => {
           event.preventDefault();
 
+          const sharePath = button.dataset.shareUrl || "";
           const shareHash = button.dataset.shareHash || "";
-          const shareUrl = `${window.location.origin}${window.location.pathname}${shareHash}`;
+          let shareUrl = `${window.location.origin}${window.location.pathname}${shareHash}`;
+
+          if (sharePath) {
+            try {
+              shareUrl = new URL(sharePath, window.location.origin).href;
+            } catch (error) {
+            }
+          }
 
           try {
             if (navigator.clipboard?.writeText) {
@@ -831,6 +841,7 @@
       }
     </script>
     <script src="{{ '/assets/js/site-search.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/site-terminal.js' | relative_url }}"></script>
     {% if page.permalink == '/intro/' %}
       <script src="{{ '/assets/js/bubble-wrap.js' | relative_url }}"></script>
       <script src="{{ '/assets/js/minesweeper.js' | relative_url }}"></script>

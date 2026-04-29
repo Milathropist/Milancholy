@@ -189,8 +189,7 @@
       !metaNode ||
       !counterNode ||
       !stateNode ||
-      !actionsNode ||
-      openNodes.length === 0
+      !actionsNode
     ) {
       return;
     }
@@ -721,6 +720,10 @@
       if (windowNode.hidden) return;
       close();
     });
+
+    window.__milancholyGames = window.__milancholyGames || {};
+    window.__milancholyGames.minesweeper = { open, close };
+    windowNode.dataset.gameReady = "true";
 
     window.addEventListener("resize", () => {
       if (windowNode.hidden || !state.hasPosition) return;

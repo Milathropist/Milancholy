@@ -1,8 +1,25 @@
 title: Milancholy
+url: https://milathropist.github.io
+baseurl: /Milasite
 markdown: kramdown
 permalink: pretty
 collections:
   blog_articles:
-    output: false
+    output: true
+    permalink: /blog/:slug/
   thingies_articles:
-    output: false
+    output: true
+    permalink: /thingies/:slug/
+defaults:
+  - scope:
+      path: ""
+      type: blog_articles
+    values:
+      layout: page
+      close_url: /blog/
+  - scope:
+      path: ""
+      type: thingies_articles
+    values:
+      layout: page
+      close_url: /thingies/

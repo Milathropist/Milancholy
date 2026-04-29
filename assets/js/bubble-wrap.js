@@ -39,7 +39,7 @@
     const restartNodes = document.querySelectorAll("[data-bubble-wrap-restart]");
     const dragHandle = windowNode?.querySelector("[data-bubble-wrap-drag-handle]");
 
-    if (!windowNode || !boardNode || !metaNode || openNodes.length === 0) return;
+    if (!windowNode || !boardNode || !metaNode) return;
 
     windowNode.hidden = true;
     windowNode.setAttribute("aria-hidden", "true");
@@ -370,6 +370,10 @@
       if (windowNode.hidden) return;
       close();
     });
+
+    window.__milancholyGames = window.__milancholyGames || {};
+    window.__milancholyGames.bubbleWrap = { open, close };
+    windowNode.dataset.gameReady = "true";
 
     if (dragHandle) {
       let dragging = false;

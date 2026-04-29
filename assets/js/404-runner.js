@@ -14,6 +14,10 @@
   const audioToggleButton = root.querySelector("[data-runner-audio-toggle]");
   const scoreNode = root.querySelector("[data-runner-score]");
   const bestNode = root.querySelector("[data-runner-best]");
+  const captionNode = root.querySelector("[data-runner-caption]");
+  const mobileControls = root.querySelector("[data-runner-mobile-controls]");
+  const jumpButton = root.querySelector("[data-runner-jump]");
+  const duckButton = root.querySelector("[data-runner-duck]");
 
   if (
     !frame ||
@@ -26,7 +30,11 @@
     !retryButton ||
     !audioToggleButton ||
     !scoreNode ||
-    !bestNode
+    !bestNode ||
+    !captionNode ||
+    !mobileControls ||
+    !jumpButton ||
+    !duckButton
   ) {
     return;
   }
@@ -100,6 +108,7 @@
     gameActive: false,
     hasInteracted: false,
     musicEnabled: true,
+    touchControlsOnly: false,
     metrics: {
       sceneWidth: 0,
       sceneHeight: 0,
@@ -118,6 +127,32 @@
       const image = new Image();
       image.src = src;
     });
+
+  function detectSystem() {
+    const nav = window.navigator || {};
+    const uaDataPlatform = String(nav.userAgentData?.platform || "");
+    const platform = String(nav.platform || "");
+    const userAgent = String(nav.userAgent || "");
+    const fingerprint = `${uaDataPlatform} ${platform} ${userAgent}`.toLowerCase();
+
+    if (fingerprint.includes("android")) return "Android phone";
+    if (fingerprint.includes("iphone")) return "iPhone from Apple";
+    if (
+      fingerprint.includes("windows") ||
+      fingerprint.includes("win32") ||
+      fingerprint.includes("win64")
+    ) {
+      return "Windows OS";
+    }
+    if (fingerprint.includes("mac")) return "MacOS";
+    if (fingerprint.includes("linux") || fingerprint.includes("x11")) return "Linux";
+
+    return "Unknown system";
+  }
+
+  function shouldUseTouchControls(systemName) {
+    return systemName === "Android phone" || systemName === "iPhone from Apple";
+  }
 
   function loadBestScore() {
     try {
@@ -172,6 +207,11 @@
       state.musicEnabled ? "Mute background music" : "Unmute background music"
     );
     audioToggleButton.title = state.musicEnabled ? "Mute background music" : "Unmute background music";
+  }
+
+  function updateMobileControlsUi() {
+    duckButton.setAttribute("aria-pressed", state.duckHeld ? "true" : "false");
+    duckButton.title = state.duckHeld ? "Stop ducking" : "Start ducking";
   }
 
   function pauseMusic(reset = false) {
@@ -247,6 +287,18 @@
   function setOverlayVisible(visible) {
     overlay.classList.toggle("is-visible", visible);
     overlay.setAttribute("aria-hidden", visible ? "false" : "true");
+  }
+
+  function configureTouchControls() {
+    const systemName = detectSystem();
+    state.touchControlsOnly = shouldUseTouchControls(systemName);
+
+    scene.classList.toggle("is-touch-locked", state.touchControlsOnly);
+    mobileControls.classList.toggle("is-visible", state.touchControlsOnly);
+    mobileControls.setAttribute("aria-hidden", state.touchControlsOnly ? "false" : "true");
+    captionNode.textContent = state.touchControlsOnly
+      ? "Tap the left button to jump. Use the right button to toggle ducking."
+      : "Press SPACE, W, or UP to jump. Hold for high jump. Hold DOWN, S, or SHIFT to duck.";
   }
 
   function updateMetrics() {
@@ -488,6 +540,7 @@
   function setDuckHeld(nextValue) {
     state.duckHeld = nextValue;
     updateDuckState();
+    updateMobileControlsUi();
     render();
   }
 
@@ -519,6 +572,7 @@
     state.alive = false;
     state.velocityY = 0;
     state.dinoY = 0;
+    state.duckHeld = false;
     state.ducking = false;
     state.jumpHeld = false;
 
@@ -527,6 +581,7 @@
       saveBestScore();
     }
 
+    updateMobileControlsUi();
     updateScoreboard();
     overlayCopy.textContent = `Score ${formatScore(state.score)}`;
     setOverlayVisible(true);
@@ -547,12 +602,14 @@
     state.dinoY = 0;
     state.velocityY = 0;
     state.lastFrame = performance.now();
+    state.duckHeld = false;
     state.ducking = false;
     state.jumpHeld = false;
 
     clearObstacles();
     setOverlayVisible(false);
     overlayCopy.textContent = "Score 0000";
+    updateMobileControlsUi();
     updateScoreboard();
     updateMetrics();
     render();
@@ -659,6 +716,7 @@
 
   scene.addEventListener("pointerdown", (event) => {
     if (shouldIgnoreJumpEvent(event)) return;
+    if (state.touchControlsOnly && event.pointerType === "touch") return;
 
     registerInteraction();
     setGameActive(true);
@@ -674,6 +732,7 @@
 
   scene.addEventListener("pointerup", (event) => {
     if (shouldIgnoreJumpEvent(event)) return;
+    if (state.touchControlsOnly && event.pointerType === "touch") return;
 
     releaseJump();
     try {
@@ -752,6 +811,28 @@
     resetGame();
   });
 
+  jumpButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    registerInteraction();
+    setGameActive(true);
+    focusNode(scene);
+    jump();
+    syncMusicPlayback();
+  });
+
+  duckButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    registerInteraction();
+    setGameActive(true);
+    focusNode(scene);
+    setDuckHeld(!state.duckHeld);
+    syncMusicPlayback();
+  });
+
   audioToggleButton.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -791,6 +872,8 @@
   });
 
   updateScoreboard();
+  configureTouchControls();
+  updateMobileControlsUi();
   updateMetrics();
   resetGame({ focusScene: false });
   window.requestAnimationFrame(step);

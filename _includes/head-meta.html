@@ -1,0 +1,35 @@
+{% assign meta_title = page.title | default: site.title %}
+{% capture meta_full_title %}{% if page.title and page.title != site.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}{% endcapture %}
+{% assign meta_type = "website" %}
+{% if page.collection == "blog_articles" or page.collection == "thingies_articles" %}
+  {% assign meta_type = "article" %}
+{% endif %}
+{% assign meta_image_path = page.og_image | default: page.image | default: page.hero_image | default: "/images/Favicon.png" %}
+{% if meta_image_path contains "://" %}
+  {% assign meta_image_url = meta_image_path %}
+{% else %}
+  {% assign meta_image_url = meta_image_path | relative_url | prepend: site.url %}
+{% endif %}
+{% assign meta_page_url = page.url | default: "/" | relative_url | prepend: site.url %}
+{% capture meta_description_raw %}{% if page.description %}{{ page.description }}{% elsif page.embed_image_only %}{% elsif page.collection == "blog_articles" or page.collection == "thingies_articles" %}{{ page.content | markdownify | strip_html | replace: "&nbsp;", " " | replace: "&#160;", " " | strip_newlines | replace: "  ", " " | replace: "  ", " " | strip }}{% endif %}{% endcapture %}
+{% assign meta_description = meta_description_raw | strip | truncate: 190 %}
+<title>{{ meta_full_title | strip | escape }}</title>
+<link rel="canonical" href="{{ meta_page_url }}">
+{% if meta_description != "" %}
+  <meta name="description" content="{{ meta_description | escape }}">
+{% endif %}
+<meta property="og:type" content="{{ meta_type }}">
+<meta property="og:site_name" content="{{ site.title | escape }}">
+<meta property="og:title" content="{{ meta_title | escape }}">
+<meta property="og:url" content="{{ meta_page_url }}">
+<meta property="og:image" content="{{ meta_image_url }}">
+<meta property="og:image:secure_url" content="{{ meta_image_url }}">
+{% if meta_description != "" %}
+  <meta property="og:description" content="{{ meta_description | escape }}">
+{% endif %}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ meta_title | escape }}">
+<meta name="twitter:image" content="{{ meta_image_url }}">
+{% if meta_description != "" %}
+  <meta name="twitter:description" content="{{ meta_description | escape }}">
+{% endif %}
