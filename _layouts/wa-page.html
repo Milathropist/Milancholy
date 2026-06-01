@@ -276,12 +276,46 @@
         box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.085);
       }
 
-      .audio-player button {
-        background: transparent;
-        border: none;
-        font-size: 18px;
+      .audio-player .audio-play-button {
+        appearance: none;
+        -webkit-appearance: none;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.72);
+        border-radius: 4px;
+        box-shadow: none;
         cursor: pointer;
         color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 3.25rem;
+        width: 3.25rem;
+        height: 2.5rem;
+        min-width: 0;
+        padding: 0;
+        line-height: 1;
+        text-align: center;
+        text-decoration: none;
+        text-transform: none;
+        letter-spacing: 0;
+      }
+
+      .audio-player .audio-play-button:hover,
+      .audio-player .audio-play-button:focus {
+        background: rgba(255, 255, 255, 0.14);
+      }
+
+      .audio-player .audio-play-button:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.86);
+        outline-offset: 3px;
+      }
+
+      .audio-player .audio-play-button i {
+        display: block;
+        width: 1em;
+        font-size: 0.95rem;
+        line-height: 1;
+        pointer-events: none;
       }
 
       .audio-player input[type="range"] {
@@ -592,9 +626,20 @@
       players.forEach((player) => {
         const audio = player.querySelector("audio");
         const playBtn = player.querySelector('[data-audio="play"], #playBtn');
+        const playIcon = playBtn?.querySelector("i");
         const progress = player.querySelector('input[type="range"]');
         const timeNode = player.querySelector('[data-audio="time"], #time');
         if (!audio || !playBtn || !progress) return;
+
+        const setPlayButtonState = () => {
+          const isPaused = audio.paused;
+          if (playIcon) {
+            playIcon.classList.toggle("fa-play", isPaused);
+            playIcon.classList.toggle("fa-pause", !isPaused);
+          }
+          playBtn.setAttribute("aria-label", isPaused ? "Play music" : "Pause music");
+          playBtn.title = isPaused ? "Play" : "Pause";
+        };
 
         const updateProgressFill = () => {
           const value = Number(progress.value) || 0;
@@ -626,15 +671,18 @@
           if (audio.paused) {
             try {
               await audio.play();
-              playBtn.textContent = "II";
             } catch (error) {
             }
           } else {
             audio.pause();
-            playBtn.textContent = ">";
           }
+          setPlayButtonState();
         });
 
+        audio.addEventListener("play", setPlayButtonState);
+        audio.addEventListener("pause", setPlayButtonState);
+        audio.addEventListener("ended", setPlayButtonState);
+        setPlayButtonState();
         updateProgressFill();
       });
 

@@ -720,6 +720,7 @@
         gap: 0;
         flex: 0 0 auto;
         box-sizing: border-box;
+        margin: 0;
         min-height: calc(1.45em + 0.62rem);
         padding: 0 0.75rem 0.62rem;
         font-family: Consolas, "Courier New", monospace;

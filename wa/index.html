@@ -6,7 +6,9 @@ hero_image: /images/MeguminMe.jpg
 ---
 <p style="text-align:center;">
 <div class="audio-player" id="musicPlayer" style="text-align:center; margin-top:10px;">
-	<button id="playBtn">▶</button>
+	<button id="playBtn" class="audio-play-button" type="button" data-audio="play" aria-label="Play music" title="Play">
+		<i class="fas fa-play" aria-hidden="true"></i>
+	</button>
 	<input type="range" id="progress" value="0" min="0" max="100" style="width:300px; accent-color:#ff4d4d;">
 	<span id="time">0:00</span>
  	<audio id="audio" src="{{ '/images/KonoSubaExplosionSnesByHorikory.mp3' | relative_url }}" loop></audio>
