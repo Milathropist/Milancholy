@@ -21,6 +21,7 @@
     { name: "stickers", description: "Lets you place the draggable pieces anywhere without gravity." },
     { name: "party", description: "Cycles the colors of visible site elements." },
     { name: "help", description: "Opens this command list in a separate window." },
+    { name: "calc / calculator", description: "Opens the Calculator window." },
     { name: "minesweeper", description: "Opens the Minesweeper window." },
     { name: "bubble wrap", description: "Opens the Bubble Wrap window." },
     { name: "runner", description: "Jumps to the Runner page." },
@@ -38,6 +39,8 @@
   const DEFAULT_SINGLE_LINE_LIMIT = 256;
   const DEFAULT_MULTI_LINE_LIMIT = 2000;
   const WINDOW_MARGIN = 12;
+  const XP_CLOSE_DURATION = 260;
+  const xpCloseStates = new WeakMap();
   const MAX_PHYSICS_ITEMS = 180;
   const MAX_RELEASE_SPEED = 1400;
   const RUNNER_URL = "https://milancholy.com/run";
@@ -158,6 +161,13 @@
     },
   };
   const WINDOW_COMMANDS = {
+    calculator: {
+      label: "Calculator",
+      windowId: "calculatorWindow",
+      apiName: "calculator",
+      scriptId: "calculator",
+      scriptPath: "/assets/js/calculator.js",
+    },
     minesweeper: {
       label: "Minesweeper",
       windowId: "minesweeperWindow",
@@ -191,6 +201,69 @@
   };
 
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+  const prefersReducedMotion = () =>
+    Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+
+  const createWindowFirework = (x, y) => {
+    if (prefersReducedMotion() || !document.body) return;
+    const fireworkNode = document.createElement("span");
+    fireworkNode.className = "window-firework";
+    fireworkNode.setAttribute("aria-hidden", "true");
+    fireworkNode.style.left = `${Math.round(x)}px`;
+    fireworkNode.style.top = `${Math.round(y)}px`;
+    document.body.appendChild(fireworkNode);
+    const remove = () => fireworkNode.remove();
+    fireworkNode.addEventListener("animationend", remove, { once: true });
+    window.setTimeout(remove, 500);
+  };
+
+  const cancelXpWindowClose = (windowNode) => {
+    const closeState = xpCloseStates.get(windowNode);
+    if (closeState) {
+      window.clearTimeout(closeState.timerId);
+      windowNode.removeEventListener("animationend", closeState.handler);
+      xpCloseStates.delete(windowNode);
+    }
+    windowNode.classList.remove("is-closing");
+  };
+
+  const closeXpWindow = (windowNode, onClosed) => {
+    if (!(windowNode instanceof HTMLElement) || windowNode.hidden) return;
+    if (xpCloseStates.has(windowNode)) return;
+
+    const rect = windowNode.getBoundingClientRect();
+    const origin = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    };
+    const finish = () => {
+      cancelXpWindowClose(windowNode);
+      windowNode.hidden = true;
+      windowNode.setAttribute("aria-hidden", "true");
+      if (typeof onClosed === "function") onClosed();
+      createWindowFirework(origin.x, origin.y);
+    };
+
+    if (prefersReducedMotion()) {
+      finish();
+      return;
+    }
+
+    const handler = (event) => {
+      if (event.target !== windowNode || event.animationName !== "xp-window-close") return;
+      finish();
+    };
+    const timerId = window.setTimeout(finish, XP_CLOSE_DURATION + 60);
+    xpCloseStates.set(windowNode, { handler, timerId });
+    windowNode.addEventListener("animationend", handler);
+    windowNode.classList.add("is-closing");
+  };
+
+  window.__milancholyWindowEffects = {
+    cancelClose: cancelXpWindowClose,
+    close: closeXpWindow,
+  };
   const lazyGameScriptPromises = Object.create(null);
   const getSiteBaseUrl = () => {
     const scriptNode =
@@ -474,7 +547,109 @@
     ensureAudioElement("minesweeperConfettiSound", "/images/MineSweeperSprites/ConfettiSE.mp3");
   };
 
+  const ensureCalculatorWindow = () => {
+    if (!document.body || document.getElementById("calculatorWindow")) return;
+
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `
+        <section
+          class="xp-search-window xp-calculator-window"
+          id="calculatorWindow"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="calculatorTitle"
+          aria-hidden="true"
+          hidden>
+          <header class="xp-search-titlebar" data-calculator-drag-handle>
+            <div class="xp-search-title" id="calculatorTitle">Calculator</div>
+            <button
+              type="button"
+              class="xp-search-close"
+              data-calculator-close
+              aria-label="Close Calculator"
+              title="Close">X</button>
+          </header>
+          <div class="xp-search-body calculator-body">
+            <div class="calculator-shell">
+              <div class="calculator-scientific" id="calculatorScientific" aria-label="Scientific functions" hidden>
+                <div class="calculator-music" aria-label="Music player for Moonlit by massobeats">
+                  <audio class="calculator-music-audio" preload="metadata" loop src="${getAssetUrl("/images/MassobeatsMoonlit.mp3")}"></audio>
+                  <button type="button" class="calculator-music-toggle" data-calculator-music-toggle data-calc-name="Play" aria-label="Play Moonlit" title="Play">
+                    <span class="calculator-music-toggle-icon" aria-hidden="true"></span>
+                  </button>
+                  <div class="calculator-music-info">
+                    <div class="calculator-music-heading">
+                      <span><strong>Moonlit</strong><small>massobeats</small></span>
+                      <span class="calculator-music-visualizer" aria-hidden="true">
+                        <i></i><i></i><i></i><i></i><i></i>
+                      </span>
+                      <span class="calculator-music-time"><span data-calculator-music-current>0:00</span> / <span data-calculator-music-duration>0:00</span></span>
+                    </div>
+                    <input class="calculator-music-progress" data-calculator-music-progress type="range" min="0" max="100" value="0" step="0.1" aria-label="Song progress" />
+                    <label class="calculator-music-volume">
+                      <span>Vol</span>
+                      <input data-calculator-music-volume type="range" min="0" max="1" value="0.65" step="0.05" aria-label="Volume" />
+                    </label>
+                  </div>
+                </div>
+                <button type="button" data-calc-value="(" data-calc-name="Open parenthesis" title="Open parenthesis">(</button>
+                <button type="button" data-calc-value=")" data-calc-name="Close parenthesis" title="Close parenthesis">)</button>
+                <button type="button" data-calc-value="pi" data-calc-name="Pi" title="Pi">π</button>
+                <button type="button" data-calc-value="e" data-calc-name="Euler's number" title="Euler's number">e</button>
+                <button type="button" data-calc-value="sin(" data-calc-name="Sine" title="Sine">sin</button>
+                <button type="button" data-calc-value="cos(" data-calc-name="Cosine" title="Cosine">cos</button>
+                <button type="button" data-calc-value="tan(" data-calc-name="Tangent" title="Tangent">tan</button>
+                <button type="button" data-calc-value="sqrt(" data-calc-name="Square root" title="Square root">√</button>
+                <button type="button" data-calc-value="ln(" data-calc-name="Natural logarithm" title="Natural logarithm">ln</button>
+                <button type="button" data-calc-value="log(" data-calc-name="Base-10 logarithm" title="Base-10 logarithm">log</button>
+                <button type="button" data-calc-action="square" data-calc-name="Square" title="Square">x²</button>
+                <button type="button" data-calc-value="^" data-calc-name="Power" title="Power">xʸ</button>
+                <button type="button" data-calc-action="reciprocal" data-calc-name="Reciprocal" title="Reciprocal">1/x</button>
+                <button type="button" data-calc-value="!" data-calc-name="Factorial" title="Factorial">n!</button>
+                <button type="button" data-calc-action="sign" data-calc-name="Change sign" title="Change sign">±</button>
+              </div>
+              <div class="calculator-main">
+                <div class="calculator-display" role="status" aria-live="polite">
+                  <div class="calculator-expression" id="calculatorExpression">&nbsp;</div>
+                  <output class="calculator-result" id="calculatorResult">0</output>
+                </div>
+                <div class="calculator-keypad" aria-label="Calculator keypad">
+                  <button type="button" class="calculator-mode" data-calc-action="mode" data-calc-name="Scientific functions" aria-expanded="false" aria-controls="calculatorScientific" title="Show scientific functions">ƒx</button>
+                  <button type="button" class="calculator-clear" data-calc-action="clear" data-calc-name="Clear" title="Clear">C</button>
+                  <button type="button" data-calc-action="backspace" data-calc-name="Delete" aria-label="Delete last character" title="Delete">Del</button>
+                  <button type="button" class="calculator-operator" data-calc-value="/" data-calc-name="Divide" title="Divide">÷</button>
+                  <button type="button" data-calc-value="7">7</button>
+                  <button type="button" data-calc-value="8">8</button>
+                  <button type="button" data-calc-value="9">9</button>
+                  <button type="button" class="calculator-operator" data-calc-value="*" data-calc-name="Multiply" title="Multiply">×</button>
+                  <button type="button" data-calc-value="4">4</button>
+                  <button type="button" data-calc-value="5">5</button>
+                  <button type="button" data-calc-value="6">6</button>
+                  <button type="button" class="calculator-operator" data-calc-value="-" data-calc-name="Subtract" title="Subtract">−</button>
+                  <button type="button" data-calc-value="1">1</button>
+                  <button type="button" data-calc-value="2">2</button>
+                  <button type="button" data-calc-value="3">3</button>
+                  <button type="button" class="calculator-operator" data-calc-value="+" data-calc-name="Add" title="Add">+</button>
+                  <button type="button" data-calc-value="%" data-calc-name="Percent" title="Percent">%</button>
+                  <button type="button" data-calc-value="0">0</button>
+                  <button type="button" data-calc-value="." data-calc-name="Decimal point" title="Decimal point">.</button>
+                  <button type="button" class="calculator-equals" data-calc-action="equals" data-calc-name="Equals" title="Equals">=</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      `
+    );
+  };
+
   const ensureWindowCommandElements = (config) => {
+    if (config.apiName === "calculator") {
+      ensureCalculatorWindow();
+      return;
+    }
+
     if (config.apiName === "bubbleWrap") {
       ensureBubbleWrapWindow();
       return;
@@ -1281,6 +1456,7 @@
       return {
         node: existing,
         open: () => {
+          cancelXpWindowClose(existing);
           existing.hidden = false;
           existing.setAttribute("aria-hidden", "false");
           requestAnimationFrame(() => {
@@ -1290,9 +1466,7 @@
           schedulePartySync();
         },
         close: () => {
-          existing.hidden = true;
-          existing.setAttribute("aria-hidden", "true");
-          schedulePartySync();
+          closeXpWindow(existing, schedulePartySync);
         },
       };
     }
@@ -1362,6 +1536,7 @@
     };
 
     const open = () => {
+      cancelXpWindowClose(windowNode);
       windowNode.hidden = false;
       windowNode.setAttribute("aria-hidden", "false");
       requestAnimationFrame(() => {
@@ -1372,9 +1547,7 @@
     };
 
     const close = () => {
-      windowNode.hidden = true;
-      windowNode.setAttribute("aria-hidden", "true");
-      schedulePartySync();
+      closeXpWindow(windowNode, schedulePartySync);
     };
 
     windowNode.addEventListener("pointerdown", stopPropagation);
@@ -2373,6 +2546,7 @@
     document.body.appendChild(windowNode);
 
     const openTerminal = () => {
+      cancelXpWindowClose(windowNode);
       windowNode.hidden = false;
       windowNode.setAttribute("aria-hidden", "false");
 
@@ -2390,9 +2564,7 @@
     };
 
     const closeTerminal = () => {
-      windowNode.hidden = true;
-      windowNode.setAttribute("aria-hidden", "true");
-      schedulePartySync();
+      closeXpWindow(windowNode, schedulePartySync);
     };
 
     const stopPropagation = (event) => {
@@ -2519,6 +2691,11 @@
 
       if (normalized === "help") {
         openHelpWindow(output);
+        return;
+      }
+
+      if (normalized === "calc" || normalized === "calculator") {
+        void openWindowFromTerminal(WINDOW_COMMANDS.calculator, output);
         return;
       }
 
